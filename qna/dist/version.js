@@ -3,6 +3,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.version = void 0;
 // This code is auto-generated, do not modify this file!
-var version = '1.0.1';
+var version = '1.0.2';
 exports.version = version;
 //# sourceMappingURL=version.js.map

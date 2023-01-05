@@ -184,9 +184,11 @@ var QuestionAndAnswerImpl = /** @class */ (function () {
      * Given the question and context, find the best answers.
      * @param question the question to find answers for.
      * @param context context where the answers are looked up from.
+     * @param id? context id where the answers are looked up from.
      * @return array of answers
      */
-    QuestionAndAnswerImpl.prototype.findAnswers = function (question, context) {
+    // tslint:disable-next-line:max-line-length
+    QuestionAndAnswerImpl.prototype.findAnswers = function (question, context, id) {
         return __awaiter(this, void 0, void 0, function () {
             var features, inputIdArray, segmentIdArray, inputMaskArray, globalStep, batchSize, result, logits, answers, i;
             var _this = this;
@@ -223,9 +225,10 @@ var QuestionAndAnswerImpl = /** @class */ (function () {
                         result[1].dispose();
                         answers = [];
                         for (i = 0; i < batchSize; i++) {
-                            answers.push(this.getBestAnswers(logits[0][i], logits[1][i], features[i].origTokens, features[i].tokenToOrigMap, context, i));
+                            answers.push(this.getBestAnswers(logits[0][i], logits[1][i], features[i].origTokens, features[i].tokenToOrigMap, context, i, id));
                         }
                         return [2 /*return*/, answers.reduce(function (flatten, array) { return flatten.concat(array); }, [])
+                                // @ts-ignore
                                 .sort(function (logitA, logitB) { return logitB.score - logitA.score; })
                                 .slice(0, PREDICT_ANSWER_NUM)];
                 }
@@ -239,7 +242,7 @@ var QuestionAndAnswerImpl = /** @class */ (function () {
      * @param origTokens original tokens of the passage
      * @param tokenToOrigMap token to index mapping
      */
-    QuestionAndAnswerImpl.prototype.getBestAnswers = function (startLogits, endLogits, origTokens, tokenToOrigMap, context, docIndex) {
+    QuestionAndAnswerImpl.prototype.getBestAnswers = function (startLogits, endLogits, origTokens, tokenToOrigMap, context, docIndex, id) {
         var _a;
         if (docIndex === void 0) { docIndex = 0; }
         // Model uses the closed interval [start, end] for indices.
@@ -248,6 +251,7 @@ var QuestionAndAnswerImpl = /** @class */ (function () {
         var origResults = [];
         startIndexes.forEach(function (start) {
             endIndexes.forEach(function (end) {
+                // tslint:disable-next-line:max-line-length
                 if (tokenToOrigMap[start + OUTPUT_OFFSET] && tokenToOrigMap[end + OUTPUT_OFFSET] && end >= start) {
                     var length_2 = end - start + 1;
                     if (length_2 < MAX_ANSWER_LEN) {
@@ -277,7 +281,8 @@ var QuestionAndAnswerImpl = /** @class */ (function () {
                 score: origResults[i].score,
                 startIndex: startIndex,
                 endIndex: endIndex,
-                context: context
+                context: context,
+                id: id
             });
         }
         return answers;

@@ -42,5 +42,6 @@ export interface Answer {
     endIndex: number;
     score: number;
     context: string;
+    id?: string;
 }
 export declare function load(modelConfig?: ModelConfig): Promise<QuestionAndAnswer>;

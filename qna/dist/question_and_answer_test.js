@@ -186,11 +186,11 @@ jasmine_util_1.describeWithFlags('qna', jasmine_util_1.NODE_ENVS, function () {
                 case 2:
                     result = _a.sent();
                     expect(result).toEqual([
-                        { text: 'answer', score: 60, startIndex: 8, endIndex: 14, context: 'this is answer for you!' },
-                        { text: 'answer for', score: 50, startIndex: 8, endIndex: 18, context: 'this is answer for you!' },
-                        { text: 'answer for you!', score: 50, startIndex: 8, endIndex: 23, context: 'this is answer for you!' },
-                        { text: 'is answer', score: 50, startIndex: 5, endIndex: 14, context: 'this is answer for you!' },
-                        { text: 'is', score: 40, startIndex: 5, endIndex: 7, context: 'this is answer for you!' }
+                        { text: 'answer', score: 60, startIndex: 8, endIndex: 14, context: 'this is answer for you!', id: 'xyz' },
+                        { text: 'answer for', score: 50, startIndex: 8, endIndex: 18, context: 'this is answer for you!', id: 'xyz' },
+                        { text: 'answer for you!', score: 50, startIndex: 8, endIndex: 23, context: 'this is answer for you!', id: 'xyz' },
+                        { text: 'is answer', score: 50, startIndex: 5, endIndex: 14, context: 'this is answer for you!', id: 'xyz' },
+                        { text: 'is', score: 40, startIndex: 5, endIndex: 7, context: 'this is answer for you!', id: 'xyz' }
                     ]);
                     return [2 /*return*/];
             }

@@ -77,6 +77,7 @@ export interface Answer {
   endIndex: number;
   score: number;
   context: string;
+  id?: string;
 }
 
 interface Feature {
@@ -208,9 +209,11 @@ class QuestionAndAnswerImpl implements QuestionAndAnswer {
    * Given the question and context, find the best answers.
    * @param question the question to find answers for.
    * @param context context where the answers are looked up from.
+   * @param id? context id where the answers are looked up from.
    * @return array of answers
    */
-  async findAnswers(question: string, context: string): Promise<Answer[]> {
+  // tslint:disable-next-line:max-line-length
+  async findAnswers(question: string, context: string, id?: string): Promise<Answer[]> {
     if (question == null || context == null) {
       throw new Error(
           'The input to findAnswers call is null, ' +
@@ -250,10 +253,11 @@ class QuestionAndAnswerImpl implements QuestionAndAnswer {
     for (let i = 0; i < batchSize; i++) {
       answers.push(this.getBestAnswers(
           logits[0][i], logits[1][i], features[i].origTokens,
-          features[i].tokenToOrigMap, context, i));
+          features[i].tokenToOrigMap, context, i, id));
     }
 
     return answers.reduce((flatten, array) => flatten.concat(array), [])
+        // @ts-ignore
         .sort((logitA, logitB) => logitB.score - logitA.score)
         .slice(0, PREDICT_ANSWER_NUM);
   }
@@ -268,13 +272,14 @@ class QuestionAndAnswerImpl implements QuestionAndAnswer {
   getBestAnswers(
       startLogits: number[], endLogits: number[], origTokens: Token[],
       tokenToOrigMap: {[key: string]: number}, context: string,
-      docIndex = 0): Answer[] {
+      docIndex = 0, id: string): Answer[] {
     // Model uses the closed interval [start, end] for indices.
     const startIndexes = this.getBestIndex(startLogits);
     const endIndexes = this.getBestIndex(endLogits);
     const origResults: AnswerIndex[] = [];
     startIndexes.forEach(start => {
       endIndexes.forEach(end => {
+        // tslint:disable-next-line:max-line-length
         if (tokenToOrigMap[start + OUTPUT_OFFSET] && tokenToOrigMap[end + OUTPUT_OFFSET] && end >= start) {
           const length = end - start + 1;
           if (length < MAX_ANSWER_LEN) {
@@ -308,7 +313,8 @@ class QuestionAndAnswerImpl implements QuestionAndAnswer {
         score: origResults[i].score,
         startIndex,
         endIndex,
-        context
+        context,
+        id
       });
     }
     return answers;
