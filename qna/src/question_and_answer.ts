@@ -76,6 +76,7 @@ export interface Answer {
   startIndex: number;
   endIndex: number;
   score: number;
+  context: string;
 }
 
 interface Feature {
@@ -306,7 +307,8 @@ class QuestionAndAnswerImpl implements QuestionAndAnswer {
         text: convertedText,
         score: origResults[i].score,
         startIndex,
-        endIndex
+        endIndex,
+        context
       });
     }
     return answers;
